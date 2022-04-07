@@ -14,10 +14,9 @@
 
 #pragma once
 
+#include <fmt/format.h>
 #include <ostream>
 #include <string>
-
-#include <absl/strings/str_cat.h>
 
 namespace batteries {
 
@@ -113,7 +112,7 @@ class error {
         } else if (error_code_.message().empty()) {
             return message_;
         } else {
-            return absl::StrCat(error_code_.message(), ": ", message_);
+            return fmt::format("{}: {}", error_code_.message(), message_);
         }
     }
 

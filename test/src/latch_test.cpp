@@ -5,14 +5,13 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "cpool/awaitable_latch.hpp"
-#include "cpool/timer.hpp"
-#include "cpool/types.hpp"
+#include "acv/awaitable_latch.hpp"
+#include "acv/types.hpp"
 #include "thread_pool.hpp"
 
 namespace {
 
-using namespace cpool;
+using namespace acv;
 
 awaitable<void> run_job(awaitable_latch& latch, uint job_num) {
     // Will be used to obtain a seed for the random number engine
@@ -22,9 +21,10 @@ awaitable<void> run_job(awaitable_latch& latch, uint job_num) {
     std::uniform_int_distribution<> distrib(10, 50);
     std::chrono::milliseconds wait_time(distrib(gen));
 
-    auto timer = cpool::timer(co_await net::this_coro::executor);
+    auto timer = net::steady_timer(co_await net::this_coro::executor);
     TRACE_LOG("LATCH_TEST", "Job {} waiting {}ms", job_num, wait_time.count());
-    co_await timer.async_wait(wait_time);
+    timer.expires_from_now(wait_time);
+    co_await timer.async_wait(use_awaitable);
 
     latch.count_down();
     TRACE_LOG("LATCH_TEST", "Job {} finished, jobs remaining {}", job_num,
@@ -55,10 +55,12 @@ awaitable<void> test_latch(net::io_context& ctx, uint num_jobs) {
 
 TEST(LATCH, MULTI_THREAD) {
     uint num_threads = 4;
+    // uint num_jobs = 4;
+    uint num_jobs = 80;
     net::io_context ctx(num_threads);
     std::vector<std::thread> threads;
 
-    co_spawn(ctx, test_latch(std::ref(ctx), num_threads * 20), detached);
+    co_spawn(ctx, test_latch(std::ref(ctx), num_jobs), detached);
 
     start_thread_pool(std::ref(threads), num_threads, [&]() { ctx.run(); });
 

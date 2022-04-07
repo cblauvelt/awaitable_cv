@@ -1,15 +1,15 @@
-#include "cpool/condition_variable.hpp"
+#include "acv/condition_variable.hpp"
 
 #include <chrono>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "cpool/types.hpp"
+#include "acv/types.hpp"
 
 namespace {
 
-using namespace cpool;
+using namespace acv;
 
 awaitable<void> wait_for(condition_variable& cv, bool& condition,
                          std::atomic<int>& barrier) {
@@ -29,7 +29,7 @@ awaitable<void> test_notify_all(net::io_context& ctx) {
             co_spawn(ctx, wait_for(cv, stop_waiting, barrier), detached);
         }
         stop_waiting = true;
-        co_await cv.notify_all();
+        cv.notify_all();
 
         net::steady_timer timer(executor);
         timer.expires_from_now(10ms);
@@ -54,7 +54,7 @@ awaitable<void> test_notify_one(net::io_context& ctx) {
             co_spawn(ctx, wait_for(cv, stop_waiting, barrier), detached);
         }
         stop_waiting = true;
-        co_await cv.notify_one();
+        cv.notify_one();
 
         net::steady_timer timer(executor);
         timer.expires_from_now(10ms);

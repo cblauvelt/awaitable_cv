@@ -6,9 +6,9 @@
 #include <boost/asio.hpp>
 #include <mutex>
 
-#include "cpool/types.hpp"
+#include "acv/types.hpp"
 
-namespace cpool {
+namespace acv {
 
 class condition_variable {
 
@@ -21,20 +21,9 @@ class condition_variable {
     template <class Pred>
     [[nodiscard]] net::awaitable<void> async_wait(Pred pred) const;
 
-    [[nodiscard]] net::awaitable<void> notify_one() {
-        net::steady_timer notify_timer(co_await net::this_coro::executor);
-        notify_timer.expires_from_now(1ms);
-        co_await notify_timer.async_wait(use_awaitable);
+    void notify_one() { timer_.cancel_one(); }
 
-        timer_.cancel_one();
-    }
-
-    [[nodiscard]] net::awaitable<void> notify_all() {
-        net::steady_timer notify_timer(co_await net::this_coro::executor);
-        notify_timer.expires_from_now(1ms);
-        co_await notify_timer.async_wait(use_awaitable);
-        timer_.cancel();
-    }
+    void notify_all() { timer_.cancel(); }
 
   private:
     mutable net::steady_timer timer_;
@@ -48,4 +37,4 @@ net::awaitable<void> condition_variable::async_wait(Pred pred) const {
     }
 }
 
-} // namespace cpool
+} // namespace acv

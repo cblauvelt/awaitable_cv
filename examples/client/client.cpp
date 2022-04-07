@@ -1,13 +1,13 @@
 #define ACV_TRACE_LOGGING
 
-#include <cpool/cpool.hpp>
+#include <acv/acv.hpp>
 #include <fmt/format.h>
 #include <iostream>
 #include <optional>
 
 using std::cout;
 using std::endl;
-using namespace cpool;
+using namespace acv;
 
 const std::string ENV_HOST = "CLIENT_HOST";
 const std::string DEFAULT_HOST = "host.docker.internal";
@@ -20,30 +20,30 @@ std::optional<std::string> get_env_var(std::string const& key) {
 }
 
 awaitable<batteries::errors::error>
-on_connection_state_change(cpool::tcp_connection* conn,
-                           const cpool::client_connection_state state) {
+on_connection_state_change(acv::tcp_connection* conn,
+                           const acv::client_connection_state state) {
     switch (state) {
-    case cpool::client_connection_state::disconnected:
+    case acv::client_connection_state::disconnected:
         cout << fmt::format("disconnected from {0}:{1}", conn->host(),
                             conn->port())
              << endl;
         break;
 
-    case cpool::client_connection_state::resolving:
+    case acv::client_connection_state::resolving:
         cout << fmt::format("resolving {0}", conn->host()) << endl;
         break;
 
-    case cpool::client_connection_state::connecting:
+    case acv::client_connection_state::connecting:
         cout << fmt::format("connecting to {0}:{1}", conn->host(), conn->port())
              << endl;
         break;
 
-    case cpool::client_connection_state::connected:
+    case acv::client_connection_state::connected:
         cout << fmt::format("connected to {0}:{1}", conn->host(), conn->port())
              << endl;
         break;
 
-    case cpool::client_connection_state::disconnecting:
+    case acv::client_connection_state::disconnecting:
         cout << fmt::format("disconnecting from {0}:{1}", conn->host(),
                             conn->port())
              << endl;
@@ -63,7 +63,7 @@ awaitable<void> run_client(boost::asio::io_context& ctx) {
     auto portString = get_env_var(ENV_PORT).value_or(DEFAULT_PORT);
     uint16_t port = std::stoi(portString);
 
-    cpool::tcp_connection connection(executor, host, port);
+    acv::tcp_connection connection(executor, host, port);
     connection.set_state_change_handler(on_connection_state_change);
 
     auto error = co_await connection.async_connect();

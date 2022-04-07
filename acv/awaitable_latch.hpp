@@ -3,10 +3,10 @@
 #include <atomic>
 #include <cstddef>
 
-#include "cpool/condition_variable.hpp"
-#include "cpool/types.hpp"
+#include "acv/condition_variable.hpp"
+#include "acv/types.hpp"
 
-namespace cpool {
+namespace acv {
 
 class awaitable_latch {
   public:
@@ -24,7 +24,7 @@ class awaitable_latch {
     static constexpr std::ptrdiff_t max() noexcept;
 
   private:
-    cpool::condition_variable cv_;
+    acv::condition_variable cv_;
     std::atomic_ptrdiff_t cnt_;
 };
 
@@ -53,4 +53,4 @@ inline awaitable<void> awaitable_latch::arrive_and_wait(std::ptrdiff_t n) {
 
 constexpr std::ptrdiff_t awaitable_latch::max() noexcept { return PTRDIFF_MAX; }
 
-} // namespace cpool
+} // namespace acv

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(cpool)
+project(acv)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
@@ -61,8 +61,8 @@ endif()
 
 # install headers
 install(
-    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/cpool/"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cpool"
+    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/acv/"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/acv"
 )
 
 # create and configure the test targets

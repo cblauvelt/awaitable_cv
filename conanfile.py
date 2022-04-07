@@ -59,7 +59,7 @@ class AwaitableCVConan(ConanFile):
 
     def package(self):
         self.copy("LICENSE", dst="licenses")
-        self.copy("*.hpp", dst="include/awaitable_cv", src="cpool")
+        self.copy("*.hpp", dst="include/awaitable_cv", src="acv")
 
     def package_id(self):
         self.info.header_only()

@@ -14,7 +14,7 @@
 #include <boost/asio/ssl.hpp>
 #include <boost/asio/write.hpp>
 
-#include <batteries/errors/error.hpp>
+#include "error.hpp"
 
 #ifdef ACV_TRACE_LOGGING
 #include <fmt/format.h>
@@ -26,7 +26,7 @@
 #define TRACE_LOG(prefix, ...)
 #endif
 
-namespace cpool {
+namespace acv {
 namespace net = boost::asio;
 using namespace boost::asio::experimental::awaitable_operators;
 using namespace std::chrono_literals;
@@ -44,4 +44,4 @@ using boost::asio::experimental::as_tuple;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
 
-} // namespace cpool
+} // namespace acv
